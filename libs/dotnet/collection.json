@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "name": "dotnet",
+  "version": "0.0.1",
+  "schematics": {
+    "dotnet": {
+      "factory": "./src/schematics/dotnet/schematic",
+      "schema": "./src/schematics/dotnet/schema.json",
+      "description": "dotnet schematic"
+    }
+  }
+}
