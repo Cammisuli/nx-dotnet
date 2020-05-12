@@ -6,6 +6,8 @@ import {
   move,
   Rule,
   url,
+  Tree,
+  SchematicContext,
 } from '@angular-devkit/schematics';
 import {
   addProjectToNxJsonInTree,
@@ -16,21 +18,23 @@ import {
   toFileName,
   updateWorkspace,
 } from '@nrwl/workspace';
-import { DotnetSchematicSchema } from './schema';
+import { LibrarySchematicSchema } from './schema';
+
+import { execSync, exec } from 'child_process';
 
 /**
  * Depending on your needs, you can change this to either `Library` or `Application`
  */
 const projectType = ProjectType.Library;
 
-interface NormalizedSchema extends DotnetSchematicSchema {
+interface NormalizedSchema extends LibrarySchematicSchema {
   projectName: string;
   projectRoot: string;
   projectDirectory: string;
   parsedTags: string[];
 }
 
-function normalizeOptions(options: DotnetSchematicSchema): NormalizedSchema {
+function normalizeOptions(options: LibrarySchematicSchema): NormalizedSchema {
   const name = toFileName(options.name);
   const projectDirectory = options.directory
     ? `${toFileName(options.directory)}/${name}`
@@ -50,22 +54,24 @@ function normalizeOptions(options: DotnetSchematicSchema): NormalizedSchema {
   };
 }
 
-function addFiles(options: NormalizedSchema): Rule {
-  return mergeWith(
-    apply(url(`./files`), [
-      applyTemplates({
-        ...options,
-        ...names(options.name),
-        offsetFromRoot: offsetFromRoot(options.projectRoot),
-      }),
-      move(options.projectRoot),
-    ])
-  );
+function generateClassLibrary(options: NormalizedSchema) {
+  return (tree: Tree, context: SchematicContext) =>
+    new Promise<void>((resolve, reject) => {
+      try {
+        const generateLib = execSync(
+          `dotnet new classlib -o ${options.projectDirectory}`,
+          { stdio: [0, 1, 2] }
+        );
+      } catch (e) {
+        reject(e);
+      }
+    });
 }
 
-export default function (options: DotnetSchematicSchema): Rule {
+export default function (options: LibrarySchematicSchema): Rule {
   const normalizedOptions = normalizeOptions(options);
   return chain([
+    generateClassLibrary(normalizedOptions),
     updateWorkspace((workspace) => {
       workspace.projects
         .add({
@@ -82,6 +88,5 @@ export default function (options: DotnetSchematicSchema): Rule {
     addProjectToNxJsonInTree(normalizedOptions.projectName, {
       tags: normalizedOptions.parsedTags,
     }),
-    addFiles(normalizedOptions),
   ]);
 }

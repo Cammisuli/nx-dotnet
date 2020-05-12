@@ -3,10 +3,17 @@
   "name": "dotnet",
   "version": "0.0.1",
   "schematics": {
-    "dotnet": {
-      "factory": "./src/schematics/dotnet/schematic",
-      "schema": "./src/schematics/dotnet/schema.json",
-      "description": "dotnet schematic"
+    "application": {
+      "factory": "./src/schematics/application/schematic",
+      "schema": "./src/schematics/application/schema.json",
+      "description": "application schematic",
+      "aliases": ["app"]
+    },
+    "library": {
+      "factory": "./src/schematics/library/schematic",
+      "schema": "./src/schematics/library/schema.json",
+      "description": "library schematic",
+      "aliases": ["lib"]
     }
   }
 }
