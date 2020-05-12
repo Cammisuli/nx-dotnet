@@ -59,9 +59,10 @@ function generateClassLibrary(options: NormalizedSchema) {
     new Promise<void>((resolve, reject) => {
       try {
         const generateLib = execSync(
-          `dotnet new classlib -o ${options.projectDirectory}`,
+          `dotnet new classlib -o ${options.projectRoot}`,
           { stdio: [0, 1, 2] }
         );
+        resolve();
       } catch (e) {
         reject(e);
       }

@@ -24,7 +24,7 @@ import { execSync } from 'child_process';
 /**
  * Depending on your needs, you can change this to either `Library` or `Application`
  */
-const projectType = ProjectType.Library;
+const projectType = ProjectType.Application;
 
 interface NormalizedSchema extends DotnetSchematicSchema {
   projectName: string;
@@ -58,9 +58,10 @@ function generateConsoleApp(options: NormalizedSchema) {
     new Promise<void>((resolve, reject) => {
       try {
         const generateLib = execSync(
-          `dotnet new console -o ${options.projectDirectory}`,
+          `dotnet new console -o ${options.projectRoot}`,
           { stdio: [0, 1, 2] }
         );
+        resolve();
       } catch (e) {
         reject(e);
       }

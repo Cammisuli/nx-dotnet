@@ -26,5 +26,6 @@
       "tags": [],
       "implicitDependencies": ["dotnet"]
     }
-  }
+  },
+  "projectGraphPlugin": []
 }
